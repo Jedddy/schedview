@@ -75,7 +75,10 @@ Future<List<Schedule>> getSchedules(int groupId) async {
   final db = await DBHelper.getDb();
 
   final List<Map<String, dynamic>> result = await db.query("schedule",
-      where: "group_id = ?", orderBy: "time_start", whereArgs: [groupId]);
+      where: "group_id = ?",
+      orderBy: "time_start",
+      groupBy: "day",
+      whereArgs: [groupId]);
 
   return result.map((schedule) {
     return Schedule.fromJson(schedule);

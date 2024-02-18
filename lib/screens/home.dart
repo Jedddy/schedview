@@ -31,24 +31,20 @@ class _Home extends State<Home> {
     super.dispose();
   }
 
-  Future<String?> showModal()  {
+  Future<String?> showModal() {
     return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Group name"),
-        content: TextField(
-          autofocus: true,
-          decoration: const InputDecoration(hintText: "Enter group name"),
-          controller: controller,
-        ),
-        actions: [
-          TextButton(
-            onPressed: submit,
-            child: const Text("Submit")
-          ),
-        ]
-      )
-    );
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text("Group name"),
+                content: TextField(
+                  autofocus: true,
+                  decoration:
+                      const InputDecoration(hintText: "Enter group name"),
+                  controller: controller,
+                ),
+                actions: [
+                  TextButton(onPressed: submit, child: const Text("Submit")),
+                ]));
   }
 
   void submit() {
@@ -68,38 +64,36 @@ class _Home extends State<Home> {
         alignment: Alignment.center,
         child: ListView(
           children: _groups.map((group) {
-          return ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Schedule(groupName: group.name))
-              );
-            },
-            onLongPress: () => showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text("Delete ${group.name}?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
+            return ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Schedule(groupName: group.name)));
+              },
+              onLongPress: () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text("Delete ${group.name}?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cancel"),
+                          ),
+                          ElevatedButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
 
-                      deleteGroup(group.id);
-                      _groups = await getGroups();
-                      setState(() {});
-                    },
-                    child: const Text("OK")
-                  )
-                ],
-              )
-            ),
-            title: Text(group.name),
-          );
-        }).toList(),
+                                deleteGroup(group.id);
+                                _groups = await getGroups();
+                                setState(() {});
+                              },
+                              child: const Text("OK"))
+                        ],
+                      )),
+              title: Text(group.name),
+            );
+          }).toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(

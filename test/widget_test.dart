@@ -10,5 +10,4 @@
 
 // import 'package:schedview/main.dart';
 
-void main() {
-}
+void main() {}

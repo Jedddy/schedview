@@ -9,10 +9,11 @@ class DBHelper {
       return _db!;
     } else {
       _db = await openDatabase(
-          join(await getDatabasesPath(), "schedview.db"),
-          onCreate: (db, version) async {
-            await db.execute('CREATE TABLE "group" (id INTEGER PRIMARY KEY, name TEXT);');
-            await db.execute("""
+        join(await getDatabasesPath(), "schedview.db"),
+        onCreate: (db, version) async {
+          await db.execute(
+              'CREATE TABLE "group" (id INTEGER PRIMARY KEY, name TEXT);');
+          await db.execute("""
               CREATE TABLE "schedule" (
                 id INTEGER PRIMARY KEY,
                 group_id INTEGER,
@@ -22,9 +23,9 @@ class DBHelper {
                 time_end TIMESTAMP
               );
             """);
-          },
-          version: 1,
-        );
+        },
+        version: 1,
+      );
       return _db!;
     }
   }

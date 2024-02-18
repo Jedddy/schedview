@@ -19,8 +19,8 @@ class DBHelper {
                 group_id INTEGER,
                 label TEXT,
                 day TEXT,
-                time_start TIMESTAMP,
-                time_end TIMESTAMP
+                time_start VARCHAR(5),
+                time_end VARCHAR(5)
               );
             """);
         },

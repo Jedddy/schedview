@@ -6,6 +6,9 @@ class Group {
 
   const Group({required this.id, required this.name});
 
+  factory Group.fromJson(Map<String, dynamic> json) =>
+      Group(id: json["id"], name: json["name"]);
+
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -34,9 +37,6 @@ Future<List<Group>> getGroups() async {
   final List<Map<String, dynamic>> result = await db.query("group");
 
   return result.map((group) {
-    return Group(
-      id: group["id"] as int,
-      name: group["name"] as String
-    );
+    return Group.fromJson(group);
   }).toList();
 }

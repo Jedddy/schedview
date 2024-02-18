@@ -1,4 +1,5 @@
-import 'package:SchedView/models/group.dart';
+import 'package:sched_view/models/group.dart';
+import 'package:sched_view/screens/schedule.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -30,7 +31,7 @@ class _Home extends State<Home> {
     super.dispose();
   }
 
-  Future<String?> show()  {
+  Future<String?> showModal()  {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -68,6 +69,12 @@ class _Home extends State<Home> {
         child: ListView(
           children: _groups.map((group) {
           return ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Schedule())
+              );
+            },
             onLongPress: () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -97,7 +104,7 @@ class _Home extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final name = await show();
+          final name = await showModal();
 
           if (name == null || name.isEmpty) return;
 

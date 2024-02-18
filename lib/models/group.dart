@@ -1,4 +1,4 @@
-import 'package:SchedView/database.dart';
+import 'package:sched_view/database.dart';
 
 class Group {
   final int id;

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:sched_view/database.dart';
 
 class Schedule {
@@ -6,8 +5,8 @@ class Schedule {
   final int groupId;
   final String label;
   final String day;
-  final DateTime timeStart;
-  final DateTime timeEnd;
+  final String timeStart;
+  final String timeEnd;
 
   Schedule({
     required this.id,
@@ -46,23 +45,24 @@ class Schedule {
 }
 
 void insertSchedule(
-  String groupId,
+  int groupId,
   String label,
   String day,
-  TimeOfDay timeStart,
-  TimeOfDay timeEnd,
+  String timeStart,
+  String timeEnd,
 ) async {
   final db = await DBHelper.getDb();
 
   await db.rawInsert(
-      'INSERT INTO "schedule" (group_id, label, day, time_start, time_end) VALUES (?, ?, ?, ?, ?)',
-      [
-        groupId,
-        label,
-        day,
-        timeStart,
-        timeEnd,
-      ]);
+    'INSERT INTO "schedule" (group_id, label, day, time_start, time_end) VALUES (?, ?, ?, ?, ?)',
+    [
+      groupId,
+      label,
+      day,
+      timeStart,
+      timeEnd,
+    ],
+  );
 }
 
 void deleteSchedule(int id) async {
@@ -71,16 +71,29 @@ void deleteSchedule(int id) async {
   await db.rawDelete('DELETE FROM schedule WHERE id = ?', [id]);
 }
 
-Future<List<Schedule>> getSchedules(int groupId) async {
+Future<Map<String, List<Schedule>>> getSchedules(int groupId) async {
   final db = await DBHelper.getDb();
 
-  final List<Map<String, dynamic>> result = await db.query("schedule",
-      where: "group_id = ?",
-      orderBy: "time_start",
-      groupBy: "day",
-      whereArgs: [groupId]);
+  final List<Map<String, dynamic>> result = await db.query(
+    "schedule",
+    where: "group_id = ?",
+    orderBy: "time_start",
+    whereArgs: [groupId],
+  );
 
-  return result.map((schedule) {
-    return Schedule.fromJson(schedule);
-  }).toList();
+  Map<String, List<Schedule>> groups = {
+    "M": [],
+    "T": [],
+    "W": [],
+    "TH": [],
+    "F": [],
+    "S": [],
+    "SU": [],
+  };
+
+  for (Map<String, dynamic> element in result) {
+    groups[element["day"]]!.add(Schedule.fromJson(element));
+  }
+
+  return groups;
 }

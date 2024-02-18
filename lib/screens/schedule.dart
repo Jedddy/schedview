@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
+// import 'package:sched_view/models/schedule.dart' as models;
+
+// class ScheduleData extends StatelessWidget {
+//   final List<models.Schedule> schedules;
+
+//   const ScheduleData({super.key, this.schedules});
+// }
+
 class Schedule extends StatefulWidget {
-  const Schedule({super.key});
+  final String groupName;
+
+  const Schedule({super.key, required this.groupName});
 
   @override
   State<Schedule> createState() => _Schedule();
@@ -14,6 +24,7 @@ class _Schedule extends State<Schedule> {
       length: 7,
       child: Scaffold(
         appBar: AppBar(
+          title: Text(widget.groupName),
           bottom: const TabBar(
             tabs: [
               Tab(text: "M"),

@@ -72,7 +72,7 @@ class _Home extends State<Home> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Schedule())
+                MaterialPageRoute(builder: (context) => Schedule(groupName: group.name))
               );
             },
             onLongPress: () => showDialog(

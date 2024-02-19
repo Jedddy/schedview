@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:sched_view/models/schedule.dart';
 
 class TimePickerInput extends StatefulWidget {
   final int groupId;
@@ -145,15 +144,15 @@ class _TimePickerInput extends State<TimePickerInput> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        insertSchedule(
-                          widget.groupId,
-                          _controller.text,
-                          _selectedDay,
-                          _formatTimeOfDay(_selectedTimeStart),
-                          _formatTimeOfDay(_selectedTimeEnd),
-                        );
+                        final data = {
+                          "groupId": widget.groupId,
+                          "label": _controller.text,
+                          "day": _selectedDay,
+                          "timeStart": _formatTimeOfDay(_selectedTimeStart),
+                          "timeEnd": _formatTimeOfDay(_selectedTimeEnd),
+                        };
 
-                        Navigator.pop(context);
+                        Navigator.pop(context, data);
                       }
                     },
                     icon: const Icon(Icons.check),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:sched_view/models/schedule.dart' as models;
+import 'package:sched_view/models/schedule.dart' as sched_model;
 import 'package:sched_view/screens/time_picker.dart';
 
-// import 'package:sched_view/models/schedule.dart' as models;
-
 // class ScheduleData extends StatelessWidget {
-//   final List<models.Schedule> schedules;
+//   final List<schedModel.Schedule> schedules;
 
 //   const ScheduleData({super.key, this.schedules});
 // }
@@ -22,12 +20,12 @@ class Schedule extends StatefulWidget {
 }
 
 class _Schedule extends State<Schedule> {
-  late Map<String, List<models.Schedule>> _schedules;
+  late Map<String, List<sched_model.Schedule>> _schedules;
 
   @override
   void initState() {
     Future.microtask(() async {
-      final schedules = await models.getSchedules(widget.groupId);
+      final schedules = await sched_model.getSchedules(widget.groupId);
 
       setState(() {
         _schedules = schedules;
@@ -66,14 +64,24 @@ class _Schedule extends State<Schedule> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final data = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TimePickerInput(
                     groupId: widget.groupId,
                   ),
                 ));
+
+            if (!context.mounted || data == null) return;
+
+            sched_model.insertSchedule(
+              data["groupId"],
+              data["label"],
+              data["day"],
+              data["timeStart"],
+              data["timeEnd"],
+            );
           },
           tooltip: "Add Schedule",
           child: const Icon(Icons.add),

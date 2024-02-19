@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:sched_view/models/schedule.dart' as sched_model;
 import 'package:sched_view/screens/time_picker.dart';
-
-// class ScheduleData extends StatelessWidget {
-//   final List<schedModel.Schedule> schedules;
-
-//   const ScheduleData({super.key, this.schedules});
-// }
+import 'package:sched_view/utils.dart';
 
 class Schedule extends StatefulWidget {
   final int groupId;
@@ -20,19 +15,22 @@ class Schedule extends StatefulWidget {
 }
 
 class _Schedule extends State<Schedule> {
-  late Map<String, List<sched_model.Schedule>> _schedules;
+  final List<String> _days = ["M", "T", "W", "TH", "F", "S", "SU"];
+  Map<String, List<sched_model.Schedule>>? _schedules;
 
   @override
   void initState() {
-    Future.microtask(() async {
-      final schedules = await sched_model.getSchedules(widget.groupId);
-
-      setState(() {
-        _schedules = schedules;
-      });
-    });
+    _updateSchedules();
 
     super.initState();
+  }
+
+  void _updateSchedules() async {
+    final schedules = await sched_model.getSchedules(widget.groupId);
+
+    setState(() {
+      _schedules = schedules;
+    });
   }
 
   @override
@@ -42,26 +40,18 @@ class _Schedule extends State<Schedule> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.groupName),
-          bottom: const TabBar(tabs: [
-            Tab(text: "M"),
-            Tab(text: "T"),
-            Tab(text: "W"),
-            Tab(text: "TH"),
-            Tab(text: "F"),
-            Tab(text: "S"),
-            Tab(text: "SU"),
-          ]),
+          bottom: TabBar(
+            tabs: _days.map((day) {
+              return Tab(
+                text: day,
+              );
+            }).toList(),
+          ),
         ),
-        body: const TabBarView(
-          children: [
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-            Icon(Icons.ice_skating),
-          ],
+        body: TabBarView(
+          children: _days.map((day) {
+            return ScheduleTable(schedule: _schedules?[day] ?? [], updater: _updateSchedules,);
+          }).toList(),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
@@ -82,11 +72,53 @@ class _Schedule extends State<Schedule> {
               data["timeStart"],
               data["timeEnd"],
             );
+
+            _updateSchedules();
           },
           tooltip: "Add Schedule",
           child: const Icon(Icons.add),
         ),
       ),
+    );
+  }
+}
+
+class ScheduleTable extends StatefulWidget {
+  final List<sched_model.Schedule> schedule;
+  final Function() updater;
+
+  const ScheduleTable({super.key, required this.schedule, required this.updater});
+
+  @override
+  State<ScheduleTable> createState() => _ScheduleTable();
+}
+
+class _ScheduleTable extends State<ScheduleTable> {
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(
+      showBottomBorder: true,
+      headingTextStyle: const TextStyle(fontWeight: FontWeight.bold),
+      columns: const <DataColumn>[
+        DataColumn(label: Text("Time")),
+        DataColumn(label: Text("Label")),
+      ],
+      rows: widget.schedule.map((e) {
+        return DataRow(
+          cells: [
+            DataCell(Text("${e.timeStart} - ${e.timeEnd}")),
+            DataCell(Text(e.label)),
+          ],
+          onLongPress: () => deleteDialog(
+            context,
+            e.label,
+            () async {
+              sched_model.deleteSchedule(e.id);
+              widget.updater();
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

@@ -20,7 +20,9 @@ class DBHelper {
                 label TEXT,
                 day TEXT,
                 time_start VARCHAR(5),
-                time_end VARCHAR(5)
+                time_end VARCHAR(5),
+
+                FOREIGN KEY (group_id) REFERENCES "group.id" ON DELETE CASCADE
               );
             """);
         },

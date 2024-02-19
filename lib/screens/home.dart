@@ -1,6 +1,7 @@
 import 'package:sched_view/models/group.dart';
 import 'package:sched_view/screens/schedule.dart';
 import 'package:flutter/material.dart';
+import 'package:sched_view/utils.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,16 +12,11 @@ class Home extends StatefulWidget {
 
 class _Home extends State<Home> {
   late List<Group> _groups = [];
-  late TextEditingController controller;
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
-    controller = TextEditingController();
-
-    Future.microtask(() async {
-      _groups = await getGroups();
-      setState(() {});
-    });
+    _updateGroups();
 
     super.initState();
   }
@@ -29,6 +25,14 @@ class _Home extends State<Home> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void _updateGroups() async {
+    final groups = await getGroups();
+
+    setState(() {
+      _groups = groups;
+    });
   }
 
   Future<String?> showModal() {
@@ -75,27 +79,10 @@ class _Home extends State<Home> {
                   ),
                 );
               },
-              onLongPress: () => showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Delete ${group.name}?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Cancel"),
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-
-                          deleteGroup(group.id);
-                          _groups = await getGroups();
-                          setState(() {});
-                        },
-                        child: const Text("OK")),
-                  ],
-                ),
-              ),
+              onLongPress: () => deleteDialog(context, group.name, () {
+                deleteGroup(group.id);
+                _updateGroups();
+              }),
               title: Text(group.name),
             );
           }).toList(),
@@ -108,9 +95,7 @@ class _Home extends State<Home> {
           if (name == null || name.isEmpty) return;
 
           insertGroup(name);
-          _groups = await getGroups();
-
-          setState(() {});
+          _updateGroups();
         },
         tooltip: "Add Schedule Group",
         child: const Icon(Icons.add),

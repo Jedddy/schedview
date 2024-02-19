@@ -39,8 +39,14 @@ class _Schedule extends State<Schedule> {
       length: 7,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.groupName),
+          backgroundColor: Colors.deepPurple,
+          title: Text(
+            widget.groupName,
+            style: const TextStyle(color: Colors.white),
+          ),
           bottom: TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.grey,
             tabs: _days.map((day) {
               return Tab(
                 text: day,
@@ -50,7 +56,10 @@ class _Schedule extends State<Schedule> {
         ),
         body: TabBarView(
           children: _days.map((day) {
-            return ScheduleTable(schedule: _schedules?[day] ?? [], updater: _updateSchedules,);
+            return ScheduleTable(
+              schedule: _schedules?[day] ?? [],
+              updater: _updateSchedules,
+            );
           }).toList(),
         ),
         floatingActionButton: FloatingActionButton(
@@ -87,7 +96,8 @@ class ScheduleTable extends StatefulWidget {
   final List<sched_model.Schedule> schedule;
   final Function() updater;
 
-  const ScheduleTable({super.key, required this.schedule, required this.updater});
+  const ScheduleTable(
+      {super.key, required this.schedule, required this.updater});
 
   @override
   State<ScheduleTable> createState() => _ScheduleTable();

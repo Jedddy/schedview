@@ -62,8 +62,11 @@ class _Home extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Schedules"),
-        backgroundColor: Colors.purple,
+        title: const Text(
+          "Schedule Viewer",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple,
       ),
       body: Container(
         alignment: Alignment.center,
@@ -103,4 +106,3 @@ class _Home extends State<Home> {
     );
   }
 }
-

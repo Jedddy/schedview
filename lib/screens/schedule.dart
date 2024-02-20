@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:sched_view/models/schedule.dart' as sched_model;
-import 'package:sched_view/screens/time_picker.dart';
+import 'package:sched_view/screens/add_schedule.dart';
 import 'package:sched_view/utils.dart';
 
 class Schedule extends StatefulWidget {
@@ -67,7 +67,7 @@ class _Schedule extends State<Schedule> {
             final data = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TimePickerInput(
+                builder: (context) => AddSchedule(
                   groupId: widget.groupId,
                 ),
               ),

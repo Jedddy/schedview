@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 
-class TimePickerInput extends StatefulWidget {
+class AddSchedule extends StatefulWidget {
   final int groupId;
 
-  const TimePickerInput({super.key, required this.groupId});
+  const AddSchedule({super.key, required this.groupId});
 
   @override
-  State<TimePickerInput> createState() => _TimePickerInput();
+  State<AddSchedule> createState() => _AddSchedule();
 }
 
-class _TimePickerInput extends State<TimePickerInput> {
+class _AddSchedule extends State<AddSchedule> {
   TimeOfDay _selectedTimeStart = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _selectedTimeEnd = const TimeOfDay(hour: 0, minute: 0);
   String _selectedDay = "M";
@@ -166,10 +166,4 @@ class _TimePickerInput extends State<TimePickerInput> {
       ),
     );
   }
-}
-
-String _formatTimeOfDay(TimeOfDay time) {
-  final hours = time.hour.toString().padLeft(2, '0');
-  final minutes = time.minute.toString().padLeft(2, '0');
-  return '$hours:$minutes';
 }

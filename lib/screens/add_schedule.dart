@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class AddSchedule extends StatefulWidget {
   final int groupId;
@@ -13,7 +13,16 @@ class AddSchedule extends StatefulWidget {
 class _AddSchedule extends State<AddSchedule> {
   TimeOfDay _selectedTimeStart = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _selectedTimeEnd = const TimeOfDay(hour: 0, minute: 0);
-  String _selectedDay = "M";
+  List<ValueItem> _selectedDays = [ValueItem(label: "Monday", value: "M")];
+  final Map<String, String> _days = {
+    "Monday": "M",
+    "Tuesday": "T",
+    "Wednesday": "W",
+    "Thursday": "TH",
+    "Friday": "F",
+    "Saturday": "S",
+    "Sunday": "SU",
+  };
   final TextEditingController _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -50,49 +59,30 @@ class _AddSchedule extends State<AddSchedule> {
 
   @override
   Widget build(BuildContext context) {
+    final options = _days.entries.map((e) {
+      return ValueItem(label: e.key, value: e.value);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Schedule"),
       ),
       body: Column(
         children: <Widget>[
-          DropdownButton(
-            value: _selectedDay,
-            items: const [
-              DropdownMenuItem(
-                value: "M",
-                child: Text("Monday"),
-              ),
-              DropdownMenuItem(
-                value: "T",
-                child: Text("Tuesday"),
-              ),
-              DropdownMenuItem(
-                value: "W",
-                child: Text("Wednesday"),
-              ),
-              DropdownMenuItem(
-                value: "TH",
-                child: Text("Thursday"),
-              ),
-              DropdownMenuItem(
-                value: "F",
-                child: Text("Friday"),
-              ),
-              DropdownMenuItem(
-                value: "S",
-                child: Text("Saturday"),
-              ),
-              DropdownMenuItem(
-                value: "SU",
-                child: Text("Sunday"),
-              )
-            ],
-            onChanged: (val) {
-              setState(() {
-                _selectedDay = val!;
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: MultiSelectDropDown(
+              hint: "Select Days",
+              dropdownHeight: 335,
+              onOptionSelected: (e) {
+                setState(() {
+                  _selectedDays = e;
+                });
+              },
+              options: options,
+              selectedOptions: [options[0]],
+              selectedOptionIcon: const Icon(Icons.check_circle),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 12, right: 12),
@@ -144,13 +134,15 @@ class _AddSchedule extends State<AddSchedule> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final data = {
-                          "groupId": widget.groupId,
-                          "label": _controller.text,
-                          "day": _selectedDay,
-                          "timeStart": _selectedTimeStart.format(context),
-                          "timeEnd": _selectedTimeEnd.format(context),
-                        };
+                        final data = _selectedDays.map((day) {
+                          return {
+                            "groupId": widget.groupId,
+                            "label": _controller.text,
+                            "day": day.value as String,
+                            "timeStart": _selectedTimeStart.format(context),
+                            "timeEnd": _selectedTimeEnd.format(context),
+                          };
+                        });
 
                         Navigator.pop(context, data);
                       }

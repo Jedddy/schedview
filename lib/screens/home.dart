@@ -12,7 +12,9 @@ class Home extends StatefulWidget {
 
 class _Home extends State<Home> {
   late List<Group> _groups = [];
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
+  final Map<int, Group> _selected = {};
+  bool _showDelete = false;
 
   @override
   void initState() {
@@ -23,7 +25,7 @@ class _Home extends State<Home> {
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -43,7 +45,7 @@ class _Home extends State<Home> {
         content: TextField(
           autofocus: true,
           decoration: const InputDecoration(hintText: "Enter group name"),
-          controller: controller,
+          controller: _controller,
         ),
         actions: [
           TextButton(onPressed: submit, child: const Text("Submit")),
@@ -53,9 +55,9 @@ class _Home extends State<Home> {
   }
 
   void submit() {
-    Navigator.of(context).pop(controller.text);
+    Navigator.of(context).pop(_controller.text);
 
-    controller.clear();
+    _controller.clear();
   }
 
   @override
@@ -66,6 +68,31 @@ class _Home extends State<Home> {
           "Schedule Viewer",
           style: TextStyle(color: Colors.white),
         ),
+        actions: _showDelete
+            ? <Widget>[
+                IconButton(
+                  onPressed: () {
+                    deleteDialog(
+                      context,
+                      _selected.entries.map((e) => e.value.name).join(", "),
+                      () {
+                        for (final group in _selected.values) {
+                          deleteGroup(group.id);
+                        }
+
+                        _updateGroups();
+                        _showDelete = false;
+                        _selected.clear();
+                      },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                )
+              ]
+            : null,
         backgroundColor: Colors.deepPurple,
       ),
       body: Container(
@@ -74,19 +101,34 @@ class _Home extends State<Home> {
           children: _groups.map((group) {
             return ListTile(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        Schedule(groupId: group.id, groupName: group.name),
-                  ),
-                );
+                if (_showDelete) {
+                  if (_selected.containsKey(group.id)) {
+                    _selected.remove(group.id);
+
+                    if (_selected.isEmpty) _showDelete = false;
+                  } else {
+                    _selected[group.id] = group;
+                  }
+
+                  setState(() {});
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Schedule(groupId: group.id, groupName: group.name),
+                    ),
+                  );
+                }
               },
-              onLongPress: () => deleteDialog(context, group.name, () {
-                deleteGroup(group.id);
-                _updateGroups();
-              }),
+              onLongPress: () {
+                setState(() {
+                  _selected[group.id] = group;
+                  _showDelete = true;
+                });
+              },
               title: Text(group.name),
+              tileColor: _selected.containsKey(group.id) ? Colors.grey.shade400 : null,
             );
           }).toList(),
         ),

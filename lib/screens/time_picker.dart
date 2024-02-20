@@ -148,8 +148,8 @@ class _TimePickerInput extends State<TimePickerInput> {
                           "groupId": widget.groupId,
                           "label": _controller.text,
                           "day": _selectedDay,
-                          "timeStart": _formatTimeOfDay(_selectedTimeStart),
-                          "timeEnd": _formatTimeOfDay(_selectedTimeEnd),
+                          "timeStart": _selectedTimeStart.format(context),
+                          "timeEnd": _selectedTimeEnd.format(context),
                         };
 
                         Navigator.pop(context, data);

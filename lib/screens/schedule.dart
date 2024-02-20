@@ -65,12 +65,13 @@ class _Schedule extends State<Schedule> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final data = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TimePickerInput(
-                    groupId: widget.groupId,
-                  ),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => TimePickerInput(
+                  groupId: widget.groupId,
+                ),
+              ),
+            );
 
             if (!context.mounted || data == null) return;
 
@@ -96,8 +97,11 @@ class ScheduleTable extends StatefulWidget {
   final List<sched_model.Schedule> schedule;
   final Function() updater;
 
-  const ScheduleTable(
-      {super.key, required this.schedule, required this.updater});
+  const ScheduleTable({
+    super.key,
+    required this.schedule,
+    required this.updater,
+  });
 
   @override
   State<ScheduleTable> createState() => _ScheduleTable();
@@ -116,8 +120,16 @@ class _ScheduleTable extends State<ScheduleTable> {
       rows: widget.schedule.map((e) {
         return DataRow(
           cells: [
-            DataCell(Text("${e.timeStart} - ${e.timeEnd}")),
-            DataCell(Text(e.label)),
+            DataCell(
+              Text(
+                "${e.timeStart} - ${e.timeEnd}",
+              ),
+            ),
+            DataCell(
+              Text(
+                e.label,
+              ),
+            ),
           ],
           onLongPress: () => deleteDialog(
             context,

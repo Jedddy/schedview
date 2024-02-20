@@ -75,7 +75,7 @@ class _Schedule extends State<Schedule> {
 
             if (!context.mounted || data == null) return;
 
-            for (const result in data) {
+            for (final result in data) {
               sched_model.insertSchedule(
                 result["groupId"],
                 result["label"],

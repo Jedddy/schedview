@@ -7,6 +7,6 @@ void main() async {
 
   runApp(const MaterialApp(
     title: "SchedView",
-    home: SafeArea(child: Home()),
+    home: SafeArea(child: HomePage()),
   ));
 }

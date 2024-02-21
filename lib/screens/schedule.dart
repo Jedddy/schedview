@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'package:sched_view/models/schedule.dart' as sched_model;
+import 'package:sched_view/models/schedule.dart';
 import 'package:sched_view/screens/add_schedule.dart';
 import 'package:sched_view/utils.dart';
 
-class Schedule extends StatefulWidget {
+class SchedulePage extends StatefulWidget {
   final int groupId;
   final String groupName;
 
-  const Schedule({super.key, required this.groupId, required this.groupName});
+  const SchedulePage({super.key, required this.groupId, required this.groupName});
 
   @override
-  State<Schedule> createState() => _Schedule();
+  State<SchedulePage> createState() => _SchedulePage();
 }
 
-class _Schedule extends State<Schedule> {
+class _SchedulePage extends State<SchedulePage> {
   final List<String> _days = ["M", "T", "W", "TH", "F", "S", "SU"];
-  Map<String, List<sched_model.Schedule>>? _schedules;
+  Map<String, List<Schedule>>? _schedules;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _Schedule extends State<Schedule> {
   }
 
   void _updateSchedules() async {
-    final schedules = await sched_model.getSchedules(widget.groupId);
+    final schedules = await getSchedules(widget.groupId);
 
     setState(() {
       _schedules = schedules;
@@ -67,7 +67,7 @@ class _Schedule extends State<Schedule> {
             final data = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddSchedule(
+                builder: (context) => AddSchedulePage(
                   groupId: widget.groupId,
                 ),
               ),
@@ -76,7 +76,7 @@ class _Schedule extends State<Schedule> {
             if (!context.mounted || data == null) return;
 
             for (final result in data) {
-              sched_model.insertSchedule(
+              insertSchedule(
                 result["groupId"],
                 result["label"],
                 result["day"],
@@ -96,7 +96,7 @@ class _Schedule extends State<Schedule> {
 }
 
 class ScheduleTable extends StatefulWidget {
-  final List<sched_model.Schedule> schedule;
+  final List<Schedule> schedule;
   final Function() updater;
 
   const ScheduleTable({
@@ -137,7 +137,7 @@ class _ScheduleTable extends State<ScheduleTable> {
             context,
             e.label,
             () async {
-              sched_model.deleteSchedule(e.id);
+              deleteSchedule(e.id);
               widget.updater();
             },
           ),

@@ -3,14 +3,14 @@ import 'package:sched_view/screens/schedule.dart';
 import 'package:flutter/material.dart';
 import 'package:sched_view/utils.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Home> createState() => _Home();
+  State<HomePage> createState() => _HomePage();
 }
 
-class _Home extends State<Home> {
+class _HomePage extends State<HomePage> {
   late List<Group> _groups = [];
   final TextEditingController _controller = TextEditingController();
   final Map<int, Group> _selected = {};
@@ -115,8 +115,10 @@ class _Home extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          Schedule(groupId: group.id, groupName: group.name),
+                      builder: (context) => SchedulePage(
+                        groupId: group.id,
+                        groupName: group.name,
+                      ),
                     ),
                   );
                 }
@@ -128,7 +130,8 @@ class _Home extends State<Home> {
                 });
               },
               title: Text(group.name),
-              tileColor: _selected.containsKey(group.id) ? Colors.grey.shade400 : null,
+              tileColor:
+                  _selected.containsKey(group.id) ? Colors.grey.shade400 : null,
             );
           }).toList(),
         ),

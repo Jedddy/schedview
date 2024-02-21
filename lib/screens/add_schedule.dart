@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
-class AddSchedule extends StatefulWidget {
+class AddSchedulePage extends StatefulWidget {
   final int groupId;
 
-  const AddSchedule({super.key, required this.groupId});
+  const AddSchedulePage({super.key, required this.groupId});
 
   @override
-  State<AddSchedule> createState() => _AddSchedule();
+  State<AddSchedulePage> createState() => _AddSchedulePage();
 }
 
-class _AddSchedule extends State<AddSchedule> {
+class _AddSchedulePage extends State<AddSchedulePage> {
   TimeOfDay _selectedTimeStart = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _selectedTimeEnd = const TimeOfDay(hour: 0, minute: 0);
   List<ValueItem> _selectedDays = [];

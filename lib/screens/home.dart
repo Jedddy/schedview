@@ -64,10 +64,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Schedule Viewer",
-          style: TextStyle(color: Colors.white),
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: _showDelete
             ? <Widget>[
                 IconButton(
@@ -94,6 +91,24 @@ class _HomePage extends State<HomePage> {
               ]
             : null,
         backgroundColor: Colors.deepPurple,
+      ),
+      drawer: Drawer(
+        surfaceTintColor: Colors.white,
+        child: Column(
+          children: <Widget>[
+            const SizedBox(
+              height: 70,
+              child: DrawerHeader(
+                child: Text("Schedule Viewer"),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () {},
+            ),
+          ],
+        ),
       ),
       body: Container(
         alignment: Alignment.center,

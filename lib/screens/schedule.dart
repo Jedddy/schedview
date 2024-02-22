@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:sched_view/models/schedule.dart';
 import 'package:sched_view/screens/add_schedule.dart';
@@ -8,7 +9,8 @@ class SchedulePage extends StatefulWidget {
   final int groupId;
   final String groupName;
 
-  const SchedulePage({super.key, required this.groupId, required this.groupName});
+  const SchedulePage(
+      {super.key, required this.groupId, required this.groupName});
 
   @override
   State<SchedulePage> createState() => _SchedulePage();
@@ -110,6 +112,8 @@ class ScheduleTable extends StatefulWidget {
 }
 
 class _ScheduleTable extends State<ScheduleTable> {
+  var box = Hive.box("settings");
+
   @override
   Widget build(BuildContext context) {
     return DataTable(
@@ -120,11 +124,19 @@ class _ScheduleTable extends State<ScheduleTable> {
         DataColumn(label: Text("Label")),
       ],
       rows: widget.schedule.map((e) {
+        bool setting = box.get("use24hr");
+        String timeStart = setting
+            ? e.timeStart
+            : _formatLocalized(context, e.timeStart);
+        String timeEnd = setting
+            ? e.timeEnd
+            : _formatLocalized(context, e.timeEnd);
+
         return DataRow(
           cells: [
             DataCell(
               Text(
-                "${e.timeStart} - ${e.timeEnd}",
+                "$timeStart - $timeEnd",
               ),
             ),
             DataCell(
@@ -145,4 +157,11 @@ class _ScheduleTable extends State<ScheduleTable> {
       }).toList(),
     );
   }
+}
+
+_formatLocalized(BuildContext context, String time) {
+  final [hour, minute] = time.split(":");
+  final tod = TimeOfDay(hour: int.parse(hour), minute: int.parse(minute));
+
+  return tod.format(context);
 }

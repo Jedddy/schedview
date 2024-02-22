@@ -63,6 +63,8 @@ class _AddSchedulePage extends State<AddSchedulePage> {
       return ValueItem(label: e.key, value: e.value);
     }).toList();
 
+    _selectedDays = [options[0]];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Schedule"),
@@ -93,8 +95,8 @@ class _AddSchedulePage extends State<AddSchedulePage> {
                     "groupId": widget.groupId,
                     "label": _controller.text,
                     "day": day.value as String,
-                    "timeStart": _selectedTimeStart.format(context),
-                    "timeEnd": _selectedTimeEnd.format(context),
+                    "timeStart": _formatMilitary(_selectedTimeStart),
+                    "timeEnd": _formatMilitary(_selectedTimeEnd),
                   };
                 });
 
@@ -217,4 +219,8 @@ class _AddSchedulePage extends State<AddSchedulePage> {
       ),
     );
   }
+}
+
+_formatMilitary(TimeOfDay time) {
+  return "${time.hour}:${time.minute}";
 }

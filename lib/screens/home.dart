@@ -2,6 +2,7 @@ import 'package:sched_view/models/group.dart';
 import 'package:sched_view/screens/schedule.dart';
 import 'package:flutter/material.dart';
 import 'package:sched_view/utils.dart';
+import 'package:sched_view/widgets/drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -92,24 +93,7 @@ class _HomePage extends State<HomePage> {
             : null,
         backgroundColor: Colors.deepPurple,
       ),
-      drawer: Drawer(
-        surfaceTintColor: Colors.white,
-        child: Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 70,
-              child: DrawerHeader(
-                child: Text("Schedule Viewer"),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: drawer(context),
       body: Container(
         alignment: Alignment.center,
         child: ListView(

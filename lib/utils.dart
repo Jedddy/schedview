@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-Future<dynamic> deleteDialog(BuildContext context, String label, Function() cb) {
+Future<dynamic> deleteDialog(
+  BuildContext context,
+  String label,
+  Function() cb,
+) {
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(

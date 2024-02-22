@@ -125,12 +125,10 @@ class _ScheduleTable extends State<ScheduleTable> {
       ],
       rows: widget.schedule.map((e) {
         bool setting = box.get("use24hr");
-        String timeStart = setting
-            ? e.timeStart
-            : _formatLocalized(context, e.timeStart);
-        String timeEnd = setting
-            ? e.timeEnd
-            : _formatLocalized(context, e.timeEnd);
+        String timeStart =
+            setting ? e.timeStart : _formatLocalized(context, e.timeStart);
+        String timeEnd =
+            setting ? e.timeEnd : _formatLocalized(context, e.timeEnd);
 
         return DataRow(
           cells: [

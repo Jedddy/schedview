@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:sched_view/models/schedule.dart';
-import 'package:sched_view/screens/add_schedule.dart';
+import 'package:sched_view/screens/upsert_schedule.dart';
 import 'package:sched_view/utils.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -69,7 +69,7 @@ class _SchedulePage extends State<SchedulePage> {
             final data = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddSchedulePage(
+                builder: (context) => UpsertSchedulePage(
                   groupId: widget.groupId,
                 ),
               ),
@@ -113,6 +113,15 @@ class ScheduleTable extends StatefulWidget {
 }
 
 class _ScheduleTable extends State<ScheduleTable> {
+  final Map<String, String> _initialToDay = {
+    "M": "Monday",
+    "T": "Tuesday",
+    "W": "Wednesday",
+    "TH": "Thursday",
+    "F": "Friday",
+    "S": "Saturday",
+    "SU": "Sunday",
+  };
   var box = Hive.box("settings");
 
   @override
@@ -131,18 +140,45 @@ class _ScheduleTable extends State<ScheduleTable> {
         String timeEnd =
             setting ? e.timeEnd : _formatLocalized(context, e.timeEnd);
 
+        void onTap() async {
+          final data = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UpsertSchedulePage(
+                isEditing: true,
+                groupId: e.groupId,
+                label: e.label,
+                day: _initialToDay[e.day]!,
+                timeStart: e.timeStart,
+                timeEnd: e.timeEnd,
+                note: e.note,
+              ),
+            ),
+          );
+
+          editSchedule(
+            e.id,
+            data["label"],
+            data["timeStart"],
+            data["timeEnd"],
+            data["note"],
+          );
+
+          widget.updater();
+        }
+
         return DataRow(
           cells: [
             DataCell(
-              Text(
-                "$timeStart - $timeEnd",
-              ),
-            ),
+                Text(
+                  "$timeStart - $timeEnd",
+                ),
+                onTap: onTap),
             DataCell(
-              Text(
-                e.label,
-              ),
-            ),
+                Text(
+                  e.label,
+                ),
+                onTap: onTap),
           ],
           onLongPress: () => deleteDialog(
             context,

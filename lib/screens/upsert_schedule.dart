@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
-class AddSchedulePage extends StatefulWidget {
+class UpsertSchedulePage extends StatefulWidget {
   final int groupId;
+  final bool isEditing;
 
-  const AddSchedulePage({super.key, required this.groupId});
+  final String? label;
+  final String? day;
+  final String? timeStart;
+  final String? timeEnd;
+  final String? note;
+
+  const UpsertSchedulePage({
+    super.key,
+    required this.groupId,
+    this.isEditing = false,
+    this.label,
+    this.day,
+    this.timeStart,
+    this.timeEnd,
+    this.note,
+  });
 
   @override
-  State<AddSchedulePage> createState() => _AddSchedulePage();
+  State<UpsertSchedulePage> createState() => _UpsertSchedulePage();
 }
 
-class _AddSchedulePage extends State<AddSchedulePage> {
-  TimeOfDay _selectedTimeStart = const TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _selectedTimeEnd = const TimeOfDay(hour: 0, minute: 0);
+class _UpsertSchedulePage extends State<UpsertSchedulePage> {
+  late TimeOfDay _selectedTimeStart;
+  late TimeOfDay _selectedTimeEnd;
   List<ValueItem> _selectedDays = [];
   final Map<String, String> _days = {
     "Monday": "M",
@@ -53,6 +69,31 @@ class _AddSchedulePage extends State<AddSchedulePage> {
   }
 
   @override
+  void initState() {
+    if (widget.isEditing) {
+      final [startHr, startMin] = widget.timeStart!.split(":");
+      final [endHr, endMin] = widget.timeEnd!.split(":");
+
+      _selectedTimeStart = TimeOfDay(
+        hour: int.parse(startHr),
+        minute: int.parse(startMin),
+      );
+      _selectedTimeEnd = TimeOfDay(
+        hour: int.parse(endHr),
+        minute: int.parse(endMin),
+      );
+
+      _controllerLabel.text = widget.label!;
+      _controllerNote.text = widget.note!;
+    } else {
+      _selectedTimeStart = const TimeOfDay(hour: 0, minute: 0);
+      _selectedTimeEnd = const TimeOfDay(hour: 0, minute: 0);
+    }
+
+    super.initState();
+  }
+
+  @override
   dispose() {
     _controllerLabel.dispose();
     _controllerNote.dispose();
@@ -71,7 +112,7 @@ class _AddSchedulePage extends State<AddSchedulePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              if (_selectedDays.isEmpty) {
+              if (_selectedDays.isEmpty && !widget.isEditing) {
                 return await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -90,18 +131,29 @@ class _AddSchedulePage extends State<AddSchedulePage> {
               }
 
               if (_formKey.currentState!.validate()) {
-                final data = _selectedDays.map((day) {
-                  return {
-                    "groupId": widget.groupId,
+                if (!widget.isEditing) {
+                  final data = _selectedDays.map((day) {
+                    return {
+                      "groupId": widget.groupId,
+                      "label": _controllerLabel.text,
+                      "day": day.value as String,
+                      "timeStart": _formatMilitary(_selectedTimeStart),
+                      "timeEnd": _formatMilitary(_selectedTimeEnd),
+                      "note": _controllerNote.text,
+                    };
+                  });
+
+                  Navigator.pop(context, data);
+                } else {
+                  final data = {
                     "label": _controllerLabel.text,
-                    "day": day.value as String,
                     "timeStart": _formatMilitary(_selectedTimeStart),
                     "timeEnd": _formatMilitary(_selectedTimeEnd),
                     "note": _controllerNote.text,
                   };
-                });
 
-                Navigator.pop(context, data);
+                  Navigator.pop(context, data);
+                }
               }
             },
             icon: const Icon(
@@ -117,17 +169,25 @@ class _AddSchedulePage extends State<AddSchedulePage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: MultiSelectDropDown(
-                hint: "Select Days",
-                dropdownHeight: 335,
-                onOptionSelected: (e) {
-                  setState(() {
-                    _selectedDays = e;
-                  });
-                },
-                options: options,
-                selectedOptionIcon: const Icon(Icons.check_circle),
-              ),
+              child: widget.isEditing
+                  ? Text(
+                      widget.day!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    )
+                  : MultiSelectDropDown(
+                      hint: "Select Days",
+                      dropdownHeight: 335,
+                      onOptionSelected: (e) {
+                        setState(() {
+                          _selectedDays = e;
+                        });
+                      },
+                      options: options,
+                      selectedOptionIcon: const Icon(Icons.check_circle),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12, right: 12),

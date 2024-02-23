@@ -86,6 +86,25 @@ void insertSchedule(
   );
 }
 
+void editSchedule(
+  int id,
+  String label,
+  String timeStart,
+  String timeEnd,
+  String note,
+) async {
+  final db = await DBHelper.getDb();
+
+  await db.rawUpdate(
+    """
+      UPDATE schedule
+      SET label = ?, time_start = ?, time_end = ?, note = ?
+      WHERE id = ?;
+    """,
+    [label, timeStart, timeEnd, note, id],
+  );
+}
+
 void deleteSchedule(int id) async {
   final db = await DBHelper.getDb();
 

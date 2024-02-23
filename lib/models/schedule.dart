@@ -114,8 +114,10 @@ void deleteSchedule(int id) async {
 Future<Map<String, List<Schedule>>> getSchedules(int groupId) async {
   final db = await DBHelper.getDb();
 
-  final List<Map<String, dynamic>> result =
-      await db.rawQuery("SELECT * FROM schedule;");
+  final List<Map<String, dynamic>> result = await db.rawQuery(
+    "SELECT * FROM schedule WHERE group_id = ? ORDER BY TIME(time_start);",
+    [groupId],
+  );
 
   Map<String, List<Schedule>> groups = {
     "M": [],

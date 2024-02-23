@@ -5,6 +5,7 @@ class UpsertSchedulePage extends StatefulWidget {
   final int groupId;
   final bool isEditing;
 
+  final int? id;
   final String? label;
   final String? day;
   final String? timeStart;
@@ -15,6 +16,7 @@ class UpsertSchedulePage extends StatefulWidget {
     super.key,
     required this.groupId,
     this.isEditing = false,
+    this.id,
     this.label,
     this.day,
     this.timeStart,
@@ -146,6 +148,7 @@ class _UpsertSchedulePage extends State<UpsertSchedulePage> {
                   Navigator.pop(context, data);
                 } else {
                   final data = {
+                    "id": widget.id,
                     "label": _controllerLabel.text,
                     "timeStart": _formatMilitary(_selectedTimeStart),
                     "timeEnd": _formatMilitary(_selectedTimeEnd),

@@ -140,53 +140,79 @@ class _ScheduleTable extends State<ScheduleTable> {
         String timeEnd =
             setting ? e.timeEnd : _formatLocalized(context, e.timeEnd);
 
-        void onTap() async {
-          final data = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UpsertSchedulePage(
-                isEditing: true,
-                groupId: e.groupId,
-                label: e.label,
-                day: _initialToDay[e.day]!,
-                timeStart: e.timeStart,
-                timeEnd: e.timeEnd,
-                note: e.note,
-              ),
-            ),
-          );
-
-          editSchedule(
-            e.id,
-            data["label"],
-            data["timeStart"],
-            data["timeEnd"],
-            data["note"],
-          );
-
-          widget.updater();
-        }
-
         return DataRow(
           cells: [
             DataCell(
-                Text(
-                  "$timeStart - $timeEnd",
-                ),
-                onTap: onTap),
+              Text(
+                "$timeStart - $timeEnd",
+              ),
+            ),
             DataCell(
-                Text(
-                  e.label,
-                ),
-                onTap: onTap),
+              Text(
+                e.label,
+              ),
+            ),
           ],
-          onLongPress: () => deleteDialog(
-            context,
-            e.label,
-            () async {
-              deleteSchedule(e.id);
-              widget.updater();
-            },
+          onLongPress: () => showDialog(
+            context: context,
+            builder: (context) => SimpleDialog(
+              title: const Text("Actions"),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SimpleDialogOption(
+                    child: const Text("Edit"),
+                    onPressed: () async {
+                      final data = await Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpsertSchedulePage(
+                            isEditing: true,
+                            groupId: e.groupId,
+                            id: e.id,
+                            label: e.label,
+                            day: _initialToDay[e.day]!,
+                            timeStart: e.timeStart,
+                            timeEnd: e.timeEnd,
+                            note: e.note,
+                          ),
+                        ),
+                      );
+
+                      if (!context.mounted || data == null) return;
+
+                      editSchedule(
+                        data["id"],
+                        data["label"],
+                        data["timeStart"],
+                        data["timeEnd"],
+                        data["note"],
+                      );
+
+                      widget.updater();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SimpleDialogOption(
+                    child: const Text("Delete"),
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      deleteDialog(
+                        context,
+                        e.label,
+                        () async {
+                          deleteSchedule(e.id);
+                          widget.updater();
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       }).toList(),

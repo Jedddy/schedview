@@ -161,7 +161,7 @@ class _ScheduleTable extends State<ScheduleTable> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SimpleDialogOption(
-                    child: const Text("Edit"),
+                    child: const Text("View/Edit"),
                     onPressed: () async {
                       final data = await Navigator.pushReplacement(
                         context,
@@ -179,7 +179,7 @@ class _ScheduleTable extends State<ScheduleTable> {
                         ),
                       );
 
-                      if (!context.mounted || data == null) return;
+                      if (data == null) return;
 
                       editSchedule(
                         data["id"],

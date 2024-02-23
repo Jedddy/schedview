@@ -23,18 +23,18 @@ class Group {
 void insertGroup(String name) async {
   final db = await DBHelper.getDb();
 
-  await db.rawInsert('INSERT INTO "group" (name) VALUES (?)', [name]);
+  await db.rawInsert('INSERT INTO schedule_group (name) VALUES (?)', [name]);
 }
 
 void deleteGroup(int id) async {
   final db = await DBHelper.getDb();
 
-  await db.rawDelete('DELETE FROM "group" WHERE id = ?;', [id]);
+  await db.rawDelete('DELETE FROM schedule_group WHERE id = ?;', [id]);
 }
 
 Future<List<Group>> getGroups() async {
   final db = await DBHelper.getDb();
-  final List<Map<String, dynamic>> result = await db.query("group");
+  final List<Map<String, dynamic>> result = await db.query("schedule_group");
 
   return result.map((group) {
     return Group.fromJson(group);

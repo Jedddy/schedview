@@ -23,7 +23,8 @@ class _AddSchedulePage extends State<AddSchedulePage> {
     "Saturday": "S",
     "Sunday": "SU",
   };
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controllerLabel = TextEditingController();
+  final TextEditingController _controllerNote = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   _selectTime(BuildContext context, String time) async {
@@ -53,7 +54,8 @@ class _AddSchedulePage extends State<AddSchedulePage> {
 
   @override
   dispose() {
-    _controller.dispose();
+    _controllerLabel.dispose();
+    _controllerNote.dispose();
     super.dispose();
   }
 
@@ -62,8 +64,6 @@ class _AddSchedulePage extends State<AddSchedulePage> {
     final options = _days.entries.map((e) {
       return ValueItem(label: e.key, value: e.value);
     }).toList();
-
-    _selectedDays = [options[0]];
 
     return Scaffold(
       appBar: AppBar(
@@ -93,10 +93,11 @@ class _AddSchedulePage extends State<AddSchedulePage> {
                 final data = _selectedDays.map((day) {
                   return {
                     "groupId": widget.groupId,
-                    "label": _controller.text,
+                    "label": _controllerLabel.text,
                     "day": day.value as String,
                     "timeStart": _formatMilitary(_selectedTimeStart),
                     "timeEnd": _formatMilitary(_selectedTimeEnd),
+                    "note": _controllerNote.text,
                   };
                 });
 
@@ -110,112 +111,123 @@ class _AddSchedulePage extends State<AddSchedulePage> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: MultiSelectDropDown(
-              hint: "Select Days",
-              dropdownHeight: 335,
-              onOptionSelected: (e) {
-                setState(() {
-                  _selectedDays = e;
-                });
-              },
-              options: options,
-              selectedOptions: [options[0]],
-              selectedOptionIcon: const Icon(Icons.check_circle),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12),
-            child: Form(
-              key: _formKey,
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  label: Text("Schedule Label"),
-                ),
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return "Label is empty.";
-                  }
-                  return null;
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 12.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: MultiSelectDropDown(
+                hint: "Select Days",
+                dropdownHeight: 335,
+                onOptionSelected: (e) {
+                  setState(() {
+                    _selectedDays = e;
+                  });
                 },
-                controller: _controller,
+                options: options,
+                selectedOptionIcon: const Icon(Icons.check_circle),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Column(
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    label: Text("Schedule Label"),
+                  ),
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return "Label is empty.";
+                    }
+                    return null;
+                  },
+                  controller: _controllerLabel,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                bottom: 20,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      bottom: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Text("Time"),
-                        Row(
-                          children: [
-                            TextButton(
-                              onPressed: () async =>
-                                  await _selectTime(context, "start"),
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.grey.shade200,
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                _selectedTimeStart.format(context),
-                                style: const TextStyle(color: Colors.black),
-                              ),
+                  const Text("Time"),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () async =>
+                            await _selectTime(context, "start"),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.shade200,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            const Icon(Icons.arrow_right),
-                            TextButton(
-                              onPressed: () async =>
-                                  await _selectTime(context, "end"),
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.grey.shade200,
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                _selectedTimeEnd.format(context),
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ],
-                    ),
+                        child: Text(
+                          _selectedTimeStart.format(context),
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      const Icon(Icons.arrow_right),
+                      TextButton(
+                        onPressed: () async =>
+                            await _selectTime(context, "end"),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.shade200,
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          _selectedTimeEnd.format(context),
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              )
-            ],
-          )
-        ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0),
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxHeight: 390,
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: "Type something",
+                    hintStyle: TextStyle(
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
+                    label: const Text("Note"),
+                  ),
+                  maxLines: null,
+                  controller: _controllerNote,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

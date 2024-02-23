@@ -84,6 +84,7 @@ class _SchedulePage extends State<SchedulePage> {
                 result["day"],
                 result["timeStart"],
                 result["timeEnd"],
+                result["note"],
               );
             }
 
@@ -124,7 +125,7 @@ class _ScheduleTable extends State<ScheduleTable> {
         DataColumn(label: Text("Label")),
       ],
       rows: widget.schedule.map((e) {
-        bool setting = box.get("use24hr");
+        bool setting = box.get("use24hr", defaultValue: false);
         String timeStart =
             setting ? e.timeStart : _formatLocalized(context, e.timeStart);
         String timeEnd =
